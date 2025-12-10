@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta charset="UTF-8">
+  <title>Müasir hesablayıcı</title>
+  <style>
+  .container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #000;
+      transition: 0.3s;
+    }
+
+    body.dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 40px 20px;
+      text-align: center;
+
+      /* ✅ Yeni əlavə edilən hissə */
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    h1 {
+      width: 100%;     /* başlıq sətir boyu */
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+	.site-footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #111;
+      color: #fff;
+      font-size: 14px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    .btn {
+      width: 48%;      
+      padding: 20px;
+      margin: 0;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #007bff;
+      color: #fff;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.02);
+      opacity: 0.9;
+    }
+
+    .toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: black;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    body.dark .btn { background: #333; }
+    body.dark .toggle {
+      background: #fff;
+      color: #000;
+    }
+	body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+
+
+  </style>
+</head>
+<body>
+
+
+<button class="toggle" onclick="toggleMode()">🌗 Ağ / Qara</button>
+
+<div class="container">
+  <h1>Müasir hesablayıcı</h1>
+
+  <button class="btn" onclick="window.location.href='teacher/muellim.html'">
+    👨‍🏫 Müəllimlər üçün hesablayıcı
+  </button>
+
+ 
+  <button class="btn" onclick="window.location.href='bal hesablayıcı/bal.html'">
+    🎓 İmtahan balının hesablanması
+  </button>
+  
+  <button class="btn" onclick="window.location.href='informatika/infor.html'">
+    🖥️İnformatika
+  </button>
+  <button class="btn" onclick="window.location.href='elaqe.html'">
+    Bizimlə əlaqə
+  </button>
+</div>
+
+<script>
+  function toggleMode() {
+    document.body.classList.toggle("dark");
+  }
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+
+
+</body>
+</html>

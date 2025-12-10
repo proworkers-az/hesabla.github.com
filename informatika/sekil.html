@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Şəkil Həcmi Hesablayıcı</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+  .container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+  body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+  .site-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #111;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:#f4f6f9;
+      color:#000;
+      transition:0.3s;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+    body.dark{
+      background:#0f172a;
+      color:#fff;
+    }
+   
+    body.dark .toggle{
+      background:#fff;
+      color:#000;
+    }
+    .box{
+      width:100%;
+      max-width:450px;
+      background:white;
+      padding:25px;
+      border-radius:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.08);
+      text-align:center;
+      transition:0.3s;
+    }
+    body.dark .box{
+      background:#1e293b;
+    }
+    h2{
+      margin-bottom:18px;
+    }
+    input, select{
+      width:100%;
+      margin:8px 0;
+      padding:12px;
+      font-size:16px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      outline:none;
+    }
+    button{
+      margin-top:10px;
+      width:100%;
+      padding:14px;
+      font-size:17px;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      transition:0.2s;
+    }
+    .calc{
+      background:#2563eb;
+      color:white;
+    }
+    .reset{
+      background:#dc2626;
+      color:white;
+    }
+    .calc:hover{background:#1d4ed8;}
+    .reset:hover{background:#b91c1c;}
+    .result{
+      margin-top:15px;
+      font-size:18px;
+      font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+
+
+<div class="box">
+  <h2>Qrafik informasiyanın həcminin hesablayıcı</h2>
+
+  <input type="number" id="width" placeholder="Eni ">
+  <input type="number" id="height" placeholder="Hündürlük ">
+
+  <select id="colorSystem" onchange="updateBitInput()">
+    <option value="cmyk">CMYK (32 bit)</option>
+    <option value="rgb">RGB (24 bit)</option>
+    <option value="highcolor">High Color (16 bit)</option>
+    <option value="safe">Təhlükəsizlik rəng palitrası (8 bit)</option>
+    <option value="mono">Monoxrom (1 bit)</option>
+    <option value="custom">Özün daxil et</option>
+  </select>
+
+  <input type="number" id="bit" placeholder="Bit dərinliyi">
+
+  <select id="unit">
+    <option value="bit">bit</option>
+    <option value="byte">Byte</option>
+    <option value="kb">KB</option>
+    <option value="mb" selected>MB</option>
+    <option value="gb">GB</option>
+  </select>
+
+  <button class="calc" onclick="calculate()">Hesabla</button>
+  <button class="reset" onclick="resetAll()">Sıfırla</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+function toggleMode(){
+  document.body.classList.toggle("dark");
+}
+
+function updateBitInput(){
+  const system = document.getElementById("colorSystem").value;
+  const bitInput = document.getElementById("bit");
+
+  switch(system){
+    case "cmyk": bitInput.value = 32; bitInput.disabled = true; break;
+    case "rgb": bitInput.value = 24; bitInput.disabled = true; break;
+    case "highcolor": bitInput.value = 16; bitInput.disabled = true; break;
+    case "safe": bitInput.value = 8; bitInput.disabled = true; break;
+    case "mono": bitInput.value = 1; bitInput.disabled = true; break;
+    case "custom": bitInput.value = ""; bitInput.disabled = false; break;
+  }
+}
+
+function calculate(){
+  const w = Number(document.getElementById("width").value);
+  const h = Number(document.getElementById("height").value);
+  const bit = Number(document.getElementById("bit").value);
+  const unit = document.getElementById("unit").value;
+  const resultBox = document.getElementById("result");
+
+  if(!w || !h || !bit){
+    resultBox.innerText = "Bütün sahələri doldurun!";
+    return;
+  }
+
+  const totalBits = w * h * bit;
+  let result = 0;
+  let text = "";
+
+  switch(unit){
+    case "bit": result = totalBits; text = " bit"; break;
+    case "byte": result = totalBits / 8; text = " Byte"; break;
+    case "kb": result = totalBits / 8 / 1024; text = " KB"; break;
+    case "mb": result = totalBits / 8 / 1024 / 1024; text = " MB"; break;
+    case "gb": result = totalBits / 8 / 1024 / 1024 / 1024; text = " GB"; break;
+  }
+
+  resultBox.innerText = "Nəticə: " + result.toFixed(2) + text;
+}
+
+function resetAll(){
+  document.getElementById("width").value = "";
+  document.getElementById("height").value = "";
+  document.getElementById("colorSystem").value = "cmyk";
+  updateBitInput();
+  document.getElementById("unit").value = "mb";
+  document.getElementById("result").innerText = "";
+}
+
+// Başlanğıc üçün bit inputu yenilə
+updateBitInput();
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+
+</body>
+</html>

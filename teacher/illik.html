@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Yarımillik Bal Hesablayıcı</title>
+  <style>
+  .container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+  body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+  .site-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #111;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #000;
+      margin: 0;
+      padding: 0;
+      transition: 0.3s;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    body.dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 15px 20px;
+    }
+
+    .toggle {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: black;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    body.dark .toggle {
+      background: white;
+      color: black;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    input {
+      width: 250px;
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    button {
+      width: 150px;
+      padding: 15px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: scale(1.03);
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 22px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 26px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="toggle" onclick="toggleMode()">🌗 Rejim</button>
+</div>
+
+<div class="container">
+  <h1>📊 İllik Bal Hesablayıcı</h1>
+
+  <input type="number" id="first" placeholder="1-ci yarımillik balı" min="0" max="100">
+  <input type="number" id="second" placeholder="2-ci yarımillik balı" min="0" max="100">
+
+  <button onclick="calculate()">Hesabla</button>
+
+  <div id="result" class="result"></div>
+</div>
+
+<script>
+  function toggleMode() {
+    document.body.classList.toggle("dark");
+  }
+
+  function calculate() {
+    let first = Number(document.getElementById("first").value);
+    let second = Number(document.getElementById("second").value);
+
+    if (isNaN(first) || isNaN(second)) {
+      document.getElementById("result").innerText = "Zəhmət olmasa hər iki sahəni doldurun!";
+      return;
+    }
+
+    if (first < 0 || first > 100 || second < 0 || second > 100) {
+      document.getElementById("result").innerText = "Bal 0-dan 100-ə qədər olmalıdır!";
+      return;
+    }
+
+    let average = (first + second) / 2;
+    document.getElementById("result").innerText = "İllik bal: " + average.toFixed(2);
+  }
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+</body>
+</html>

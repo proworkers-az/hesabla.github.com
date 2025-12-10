@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Buraxılış Bal Hesablayıcı</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+  .container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+  body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+  .site-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #111;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+    body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; }
+    h2 { margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    th { background: #f1f1f1; font-size: 14px; }
+    input { width: 90%; padding: 6px; text-align: center; font-size: 14px; transition: border 0.2s; }
+    input.over-max { border: 2px solid red; }
+    .right-col { background: #d5f2dc; font-weight: bold; }
+    .total-row { background: #f8d7da; text-align: right; font-weight: bold; }
+    button { margin-top: 15px; padding: 12px 25px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    #warning { color: red; margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h2>Buraxılış imtahanının balının hesablanması</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Fənnin adı</th>
+      <th>Cavabların kodlaşdırılması tələb olunan<br>açıq tipli tapşırıqların sayı (açıq,kod)</th>
+      <th>Qapalı tipli <br> tapşırıqların sayı (qapalı)</th>
+      <th>Yazılı şəkildə cavablandırılması<br> tələb olunan tapşırıqların sayı (açıq,yazılı)</th>
+      <th>Nisbi bal (NB)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Tədris dili</td>
+      <td></td>
+      <td><input type="number" id="t_qapali" min="0" max="20"></td>
+      <td><input type="number" id="t_yazili" min="0" max="10"></td>
+      <td class="right-col" id="t_nb">0.0</td>
+    </tr>
+    <tr>
+      <td>Riyaziyyat</td>
+      <td><input type="number" id="r_kod" min="0" max="5"></td>
+      <td><input type="number" id="r_qapali" min="0" max="13"></td>
+      <td><input type="number" id="r_yazili" min="0" max="7"></td>
+      <td class="right-col" id="r_nb">0.0</td>
+    </tr>
+    <tr>
+      <td>Xarici dil</td>
+      <td></td>
+      <td><input type="number" id="x_qapali" min="0" max="23"></td>
+      <td><input type="number" id="x_yazili" min="0" max="7"></td>
+      <td class="right-col" id="x_nb">0.0</td>
+    </tr>
+    <tr>
+      <td colspan="4" class="total-row">ÜMUMİ BAL:</td>
+      <td class="total-row" id="total">0.00</td>
+    </tr>
+  </tbody>
+</table>
+
+<div id="warning"></div>
+
+<button onclick="calculate()">Hesabla</button>
+
+<script>
+  const inputsData = [
+    ["t_yazili", 10], ["t_qapali", 20],
+    ["r_kod", 5], ["r_qapali", 13], ["r_yazili", 7],
+    ["x_qapali", 23], ["x_yazili", 7]
+  ];
+
+  function val(id, max) {
+    let el = document.getElementById(id);
+    let original = Number(el.value) || 0;
+    let v = Math.min(original, max); // maksimum dəyəri keçməsin
+
+    if(original > max){
+      el.classList.add("over-max");
+    } else {
+      el.classList.remove("over-max");
+    }
+
+    return v;
+  }
+
+function calculate() {
+  let t = (5/2) * (2*val("t_yazili",10) + val("t_qapali",20));
+  let r = (25/8) * (2*val("r_yazili",7) + val("r_kod",5) + val("r_qapali",13));
+  let x = (100/37) * (2*val("x_yazili",7) + val("x_qapali",23));
+
+  // NB-ləri yuvarlaqlaşdır
+  let tNB = Number(t.toFixed(1));
+  let rNB = Number(r.toFixed(1));
+  let xNB = Number(x.toFixed(1));
+
+  // ekrana yaz
+  document.getElementById("t_nb").innerText = tNB;
+  document.getElementById("r_nb").innerText = rNB;
+  document.getElementById("x_nb").innerText = xNB;
+
+  // total artıq düzgün hesablanır
+  document.getElementById("total").innerText = (tNB + rNB + xNB).toFixed(2);
+
+  // warning
+  const warnings = [];
+  inputsData.forEach(([id,max]) => {
+    let valNum = Number(document.getElementById(id).value) || 0;
+    if(valNum > max){
+      warnings.push(`Diqqət: maksimum dəyər ${max}-dir!`);
+    }
+  });
+  document.getElementById("warning").innerText = warnings.join(" ");
+}
+
+
+  // real-time input yoxlama
+  inputsData.forEach(([id,max]) => {
+    document.getElementById(id).addEventListener("input", () => {
+      val(id,max);
+    });
+  });
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+
+</body>
+</html>

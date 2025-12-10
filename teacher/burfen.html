@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>BSQ + KSQ Hesablayıcı</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+  .container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+  body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+  .site-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #111;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #000;
+      margin: 0;
+      padding: 0;
+      transition: 0.3s;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    body.dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 15px 20px;
+    }
+
+    .toggle {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: black;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    body.dark .toggle {
+      background: white;
+      color: black;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+    }
+
+    input {
+      width: 250px;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-top: 10px;
+      margin-left: 5px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: scale(1.03);
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 22px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      text-align: center;
+    }
+
+    .inputs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .ksq-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="toggle" onclick="toggleMode()">🌗 Rejim</button>
+</div>
+
+<div class="container">
+  <h1>📝 Yarımillik bal hesablayıcı</h1>
+
+  <!-- BSQ input -->
+  <input type="number" id="bsq" placeholder="BSQ" min="0" max="100">
+
+  <!-- KSQ inputları -->
+  <div class="inputs-container" id="ksqContainer">
+    <div class="input-row">
+      <input type="number" name="ksq1" placeholder="KSQ1" min="0" max="100">
+    </div>
+    <div class="input-row">
+      <input type="number" name="ksq2" placeholder="KSQ2" min="0" max="100">
+    </div>
+  </div>
+
+  <!-- + və - düymələri -->
+  <div class="ksq-buttons">
+    <button onclick="addKSQ()">➕ Yeni KSQ</button>
+    <button onclick="removeKSQ()">➖ Son KSQ</button>
+  </div>
+
+  <button onclick="calculate()">Hesabla</button>
+
+  <div id="result" class="result"></div>
+</div>
+
+<script>
+  let ksqCount = 2; // Başlanğıc KSQ inputları
+
+  function toggleMode() {
+    document.body.classList.toggle("dark");
+  }
+
+  function addKSQ() {
+    ksqCount++;
+    const container = document.getElementById("ksqContainer");
+    const newRow = document.createElement("div");
+    newRow.className = "input-row";
+
+    const newInput = document.createElement("input");
+    newInput.type = "number";
+    newInput.name = "ksq" + ksqCount;
+    newInput.placeholder = "KSQ" + ksqCount;
+    newInput.min = 0;
+    newInput.max = 100;
+
+    newRow.appendChild(newInput);
+    container.appendChild(newRow);
+  }
+
+  function removeKSQ() {
+    const container = document.getElementById("ksqContainer");
+    if (container.children.length > 2) { // Minimum 2 input qalır
+      container.removeChild(container.lastChild);
+      ksqCount--;
+    }
+  }
+
+  function calculate() {
+    const bsqInput = document.getElementById("bsq");
+    const bsq = Number(bsqInput.value);
+
+    if (isNaN(bsq) || bsq < 0 || bsq > 100) {
+      document.getElementById("result").innerText = "BSQ 0-dan 100-ə qədər olmalıdır!";
+      return;
+    }
+
+    const ksqInputs = document.querySelectorAll("#ksqContainer input");
+    let sumKSQ = 0;
+    let countKSQ = 0;
+
+    for (let input of ksqInputs) {
+      const val = Number(input.value);
+      if (isNaN(val)) continue;
+      if (val < 0 || val > 100) {
+        document.getElementById("result").innerText = "KSQ 0-dan 100-ə qədər olmalıdır!";
+        return;
+      }
+      sumKSQ += val;
+      countKSQ++;
+    }
+
+    if (countKSQ === 0) {
+      document.getElementById("result").innerText = "Zəhmət olmasa KSQ ballarını daxil edin!";
+      return;
+    }
+
+    const ksqAverage = sumKSQ / countKSQ;
+    const finalScore = (bsq * 0.6) + (ksqAverage * 0.3);
+    document.getElementById("result").innerText = "Nəticə: " + finalScore.toFixed(2);
+  }
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+
+</body>
+</html>

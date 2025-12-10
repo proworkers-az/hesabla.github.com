@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>KSQ Müəllim Köməkçi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+  .container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+  body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+  .site-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #111;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+      color: #000;
+      transition: 0.3s;
+    }
+    body.dark { background: #111; color: #fff; }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 15px 20px;
+      gap: 10px;
+    }
+
+    .toggle, .reset-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .toggle { background:black; }
+    body.dark .toggle { background:white; color:black; }
+    .reset-btn { background:#dc3545; }
+
+    .container {
+      max-width: 520px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    input[type="number"] {
+      width: 220px;
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 6px 0;
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.04);
+      gap: 10px;
+    }
+    body.dark .question { background: rgba(255,255,255,0.05); }
+
+    .result {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <button class="toggle" onclick="toggleMode()">🌗 Rejim</button>
+  <button class="reset-btn" onclick="resetApp()">🔄 Yenidən başla</button>
+</div>
+
+<div class="container">
+  <h2>KSQ Balının Hesablanması</h2>
+
+  <!-- STEP 1 -->
+  <div id="step1">
+    <input type="number" id="questionCount" placeholder="Sual sayı (məs: 10)" min="1">
+    <br>
+    <button onclick="generateInputs()">Başla</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="questionsArea"></div>
+
+  <button onclick="startProcess()" id="startBtn" class="hidden">Yoxlamaya başla</button>
+  <button onclick="calculate()" id="calcBtn" class="hidden">Hesabla</button>
+
+  <div id="result" class="result"></div>
+</div>
+
+<script>
+  const questionInput = document.getElementById("questionCount");
+  const area = document.getElementById("questionsArea");
+  const startBtn = document.getElementById("startBtn");
+  const calcBtn = document.getElementById("calcBtn");
+  const resultBox = document.getElementById("result");
+  const step1 = document.getElementById("step1");
+
+  function toggleMode() {
+    document.body.classList.toggle("dark");
+  }
+
+  function generateInputs() {
+    const count = Number(questionInput.value);
+
+    area.innerHTML = "";
+    resultBox.innerText = "";
+    startBtn.classList.add("hidden");
+    calcBtn.classList.add("hidden");
+
+    if (!count || count <= 0) {
+      alert("Zəhmət olmasa düzgün sual sayı yaz!");
+      return;
+    }
+
+    for (let i = 1; i <= count; i++) {
+      const div = document.createElement("div");
+      div.className = "question";
+
+      div.innerHTML = `
+        <label>Sual ${i}</label>
+        <input type="number" class="scoreInput" placeholder="Bal" min="0" max="100">
+        <input type="checkbox" class="check" style="display:none;">
+      `;
+
+      area.appendChild(div);
+    }
+
+    startBtn.classList.remove("hidden");
+  }
+
+  function startProcess() {
+    const inputs = document.querySelectorAll(".scoreInput");
+    let sum = 0;
+    let filled = true;
+
+    inputs.forEach(inp => {
+      const val = Number(inp.value);
+      if (inp.value === "") filled = false;
+      sum += val;
+    });
+
+    if (!filled) {
+      alert("Bütün balları doldur!");
+      return;
+    }
+
+    if (sum !== 100) {
+      alert("Balların cəmi 100 olmalıdır!\nHazırki cəm: " + sum);
+      return;
+    }
+
+    document.querySelectorAll(".check").forEach(c => c.style.display = "inline-block");
+
+    // ✅ STEP1 gizlənir
+    step1.classList.add("hidden");
+
+    startBtn.classList.add("hidden");
+    calcBtn.classList.remove("hidden");
+  }
+
+  function calculate() {
+    const questions = document.querySelectorAll(".question");
+    let total = 0;
+
+    questions.forEach(q => {
+      const score = Number(q.querySelector(".scoreInput").value);
+      const checkbox = q.querySelector(".check");
+
+      if (checkbox.checked) {
+        total += score;
+        checkbox.checked = false;
+      }
+    });
+
+    resultBox.innerText = "✅ Toplam bal: " + total;
+  }
+
+  function resetApp() {
+    questionInput.value = "";
+    area.innerHTML = "";
+    startBtn.classList.add("hidden");
+    calcBtn.classList.add("hidden");
+    resultBox.innerText = "";
+    step1.classList.remove("hidden"); // geri qaytarılır
+  }
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+
+</body>
+</html>

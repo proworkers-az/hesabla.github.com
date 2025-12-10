@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>I ixtisas qrupu hesablayıcı</title>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #111;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+    body { font-family: Arial; background:#f4f4f4; padding:20px; }
+    table { width:100%; border-collapse: collapse; background:white; }
+    th, td { border:1px solid #ccc; padding:10px; text-align:center; }
+    input { width:60px; padding:5px; text-align:center; }
+    .sum { background:#ffe4e4; font-weight:bold; }
+    .nbq { background:#dff3ff; }
+    .nba { background:#e3ffe3; }
+    #hesabla { margin-top: 15px; padding: 12px 25px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    #errorBox { margin-top:15px; color:#ff2b2b; font-weight:bold; font-size:15px; }
+</style>
+</head>
+<body>
+
+<h2>I ixtisas qrupu</h2>
+
+<table>
+<tr>
+    <th>Fənn</th>
+    <th>Əmsal</th>
+    <th>Düzgün qapalı</br> sualların sayı(Dq)</th>
+    <th>Yanlış qapalı</br>sualların sayı(Yq)</th>
+    <th>Düzgün kodlaşdırıla</br> bilən açıq sualların sayı(Dkod)</th>
+    <th>Yazılı cavab tələb</br> edən düzgün sualların sayı (Dyazılı)</th>
+    <th class="nbq">NBq</th>
+    <th class="nba">NBa</th>
+    <th class="nba">NB</th>
+</tr>
+
+<tr>
+    <td>Riyaziyyat</td>
+    <td><input id="rq_emsal" value="1.5" disabled></td>
+    <td><input id="rq_dq" value="0"></td>
+    <td><input id="rq_yq" value="0"></td>
+    <td><input id="rq_dkod" value="0"></td>
+    <td><input id="rq_dyazili" value="0"></td>
+    <td id="rq_nbq">0.00</td>
+    <td id="rq_nba">0.00</td>
+    <td id="rq_nb">0.00</td>
+</tr>
+
+<tr>
+    <td>Fizika</td>
+    <td><input id="fz_emsal" value="1.5" disabled></td>
+    <td><input id="fz_dq" value="0"></td>
+    <td><input id="fz_yq" value="0"></td>
+    <td><input id="fz_dkod" value="0"></td>
+    <td><input id="fz_dyazili" value="0"></td>
+    <td id="fz_nbq">0.00</td>
+    <td id="fz_nba">0.00</td>
+    <td id="fz_nb">0.00</td>
+</tr>
+
+<tr>
+    <td>Kimya / İnformatika</td>
+    <td><input id="km_emsal" value="1" disabled></td>
+    <td><input id="km_dq" value="0"></td>
+    <td><input id="km_yq" value="0"></td>
+    <td><input id="km_dkod" value="0"></td>
+    <td><input id="km_dyazili" value="0"></td>
+    <td id="km_nbq">0.00</td>
+    <td id="km_nba">0.00</td>
+    <td id="km_nb">0.00</td>
+</tr>
+
+<tr>
+    <td colspan="8" class="sum">Ümumi bal:</td>
+    <td id="umumi" class="sum">0.00</td>
+</tr>
+</table>
+
+<div id="errorBox"></div>
+<button id="hesabla" onclick="hesabla()">Hesabla</button>
+
+<script>
+// NBq və NBa hesabları
+function tapNBq(Dq, Yq) { return (Dq - Yq/4) * 100 / 33; }
+function tapNBa(Dkod, Dyazili) { return (Dkod + 2*Dyazili) * 100 / 33; }
+
+// NB cədvəldə = NBq + NBa
+function hesablaFen(dq, yq, dkod, dyazili) {
+    let NBq = tapNBq(dq, yq);
+    let NBa = tapNBa(dkod, dyazili);
+    let NB = NBq + NBa; // cədvəldə göstəriləcək NB
+    return [NBq, NBa, NB];
+}
+
+function hesabla() {
+    let errorList = [];
+
+    function checkLimits(value, max, fname, field) {
+        if (value > max)
+            errorList.push(`${fname} – ${field} maksimum ${max} ola bilər.`);
+    }
+
+    // Riyaziyyat
+    let rq = {
+        dq:+rq_dq.value, yq:+rq_yq.value,
+        dkod:+rq_dkod.value, dy:+rq_dyazili.value,
+        emsal:+rq_emsal.value
+    };
+    checkLimits(rq.dkod, 5, "Riyaziyyat", "Dkod");
+    checkLimits(rq.dy, 3, "Riyaziyyat", "Dyazılı");
+    let rqres = hesablaFen(rq.dq, rq.yq, rq.dkod, rq.dy);
+    rq_nbq.textContent = rqres[0].toFixed(2);
+    rq_nba.textContent = rqres[1].toFixed(2);
+    rq_nb.textContent  = rqres[2].toFixed(2);
+
+    // Fizika
+    let fz = {
+        dq:+fz_dq.value, yq:+fz_yq.value,
+        dkod:+fz_dkod.value, dy:+fz_dyazili.value,
+        emsal:+fz_emsal.value
+    };
+    checkLimits(fz.dkod, 5, "Fizika", "Dkod");
+    checkLimits(fz.dy, 3, "Fizika", "Dyazılı");
+    let fzres = hesablaFen(fz.dq, fz.yq, fz.dkod, fz.dy);
+    fz_nbq.textContent = fzres[0].toFixed(2);
+    fz_nba.textContent = fzres[1].toFixed(2);
+    fz_nb.textContent  = fzres[2].toFixed(2);
+
+    // Kimya
+    let km = {
+        dq:+km_dq.value, yq:+km_yq.value,
+        dkod:+km_dkod.value, dy:+km_dyazili.value,
+        emsal:+km_emsal.value
+    };
+    checkLimits(km.dkod, 5, "Kimya", "Dkod");
+    checkLimits(km.dy, 3, "Kimya", "Dyazılı");
+    let kmres = hesablaFen(km.dq, km.yq, km.dkod, km.dy);
+    km_nbq.textContent = kmres[0].toFixed(2);
+    km_nba.textContent = kmres[1].toFixed(2);
+    km_nb.textContent  = kmres[2].toFixed(2);
+
+    // Xətaları göstər
+    errorBox.innerHTML = errorList.length ? errorList.join("<br>") : "";
+
+    // Yekun bal = NB * Əmsal
+    let umumiBal = errorList.length === 0 
+        ? (rqres[2]*rq.emsal + fzres[2]*fz.emsal + kmres[2]*km.emsal)
+        : 0;
+    umumi.textContent = umumiBal.toFixed(2);
+}
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+
+</body>
+</html>

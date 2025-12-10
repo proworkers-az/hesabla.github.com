@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta charset="UTF-8">
+<title>III ixtisas qrupu hesablayıcı</title>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #111;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+    body { font-family: Arial; background:#f4f4f4; padding:20px; }
+    table { width:100%; border-collapse: collapse; background:white; }
+    th, td { border:1px solid #ccc; padding:10px; text-align:center; }
+    input { width:60px; padding:5px; text-align:center; }
+    .sum { background:#ffe4e4; font-weight:bold; }
+    .nbq { background:#dff3ff; }
+    .nba { background:#e3ffe3; }
+    #hesabla { margin-top: 15px; padding: 12px 25px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    #errorBox { margin-top:15px; color:#ff2b2b; font-weight:bold; font-size:15px; }
+</style>
+</head>
+<body>
+
+<h2 >III ixtisas qrupu</h2>
+
+<table>
+<tr>
+    <th>Fənn</th>
+    <th>Əmsal</th>
+    <th>Düzgün qapalı</br> sualların sayı(Dq)</th>
+    <th>Yanlış qapalı</br>sualların sayı(Yq)</th>
+    <th>Düzgün kodlaşdırıla</br> bilən açıq sualların sayı(Dkod)</th>
+    <th>Yazılı cavab tələb</br> edən düzgün sualların sayı (Dyazılı)</th>
+    <th class="nbq">NBq</th>
+    <th class="nba">NBa</th>
+    <th class="nba">NB</th>
+</tr>
+
+<tr>
+    <td>Azərbaycan dili/ Rus dili</td>
+    <td><input id="az_emsal" value="1.5" disabled></td>
+    <td><input id="az_dq" value="0"></td>
+    <td><input id="az_yq" value="0"></td>
+    <td><input id="az_dkod" value="0"></td>
+    <td><input id="az_dyazili" value="0"></td>
+    <td id="az_nbq">0.00</td>
+    <td id="az_nba">0.00</td>
+    <td id="az_nb">0.00</td>
+</tr>
+
+<tr>
+    <td>Tarix</td>
+    <td><input id="ta_emsal" value="1.5" disabled></td>
+    <td><input id="ta_dq" value="0"></td>
+    <td><input id="ta_yq" value="0"></td>
+    <td><input id="ta_dkod" value="0"></td>
+    <td><input id="ta_dyazili" value="0"></td>
+    <td id="ta_nbq">0.00</td>
+    <td id="ta_nba">0.00</td>
+    <td id="ta_nb">0.00</td>
+</tr>
+
+<tr>
+    <td>Ədəbiyyat/Coğrafiya</td>
+    <td><input id="co_emsal" value="1" disabled></td>
+    <td><input id="co_dq" value="0"></td>
+    <td><input id="co_yq" value="0"></td>
+    <td><input id="co_dkod" value="0"></td>
+    <td><input id="co_dyazili" value="0"></td>
+    <td id="co_nbq">0.00</td>
+    <td id="co_nba">0.00</td>
+    <td id="co_nb">0.00</td>
+</tr>
+
+<tr>
+    <td colspan="8" class="sum">Ümumi bal:</td>
+    <td id="umumi" class="sum">0.00</td>
+</tr>
+</table>
+
+<div id="errorBox"></div>
+<button id="hesabla" onclick="hesabla()">Hesabla</button>
+
+<script>
+// NBq və NBa hesabları
+function tapNBq(Dq, Yq) { return (Dq - Yq/4) * 100 / 33; }
+function tapNBa(Dkod, Dyazili) { return (Dkod + 2*Dyazili) * 100 / 33; }
+
+// NB cədvəldə = NBq + NBa
+function hesablaFen(dq, yq, dkod, dyazili) {
+    let NBq = tapNBq(dq, yq);
+    let NBa = tapNBa(dkod, dyazili);
+    let NB = NBq + NBa; // cədvəldə göstəriləcək NB
+    return [NBq, NBa, NB];
+}
+
+function hesabla() {
+    let errorList = [];
+
+    function checkLimits(value, max, fname, field) {
+        if (value > max)
+            errorList.push(`${fname} – ${field} maksimum ${max} ola bilər.`);
+    }
+
+    // Azərbaycan dili
+    let az = {
+        dq:+az_dq.value, yq:+az_yq.value,
+        dkod:+az_dkod.value, dy:+az_dyazili.value,
+        emsal:+az_emsal.value
+    };
+    checkLimits(az.dkod, 5, "Azərbaycan dili", "Dkod");
+    checkLimits(az.dy, 3, "Azərbaycan dili", "Dyazılı");
+    let azres = hesablaFen(az.dq, az.yq, az.dkod, az.dy);
+    az_nbq.textContent = azres[0].toFixed(2);
+    az_nba.textContent = azres[1].toFixed(2);
+    az_nb.textContent  = azres[2].toFixed(2);
+
+    // Tarix
+	
+    let ta = {
+        dq:+ta_dq.value, yq:+ta_yq.value,
+        dkod:+ta_dkod.value, dy:+ta_dyazili.value,
+        emsal:+ta_emsal.value
+    };
+    checkLimits(ta.dkod, 5, "Tarix", "Dkod");
+    checkLimits(ta.dy, 3, "Tarix", "Dyazılı");
+    let tares = hesablaFen(ta.dq, ta.yq, ta.dkod, ta.dy);
+    ta_nbq.textContent = tares[0].toFixed(2);
+    ta_nba.textContent = tares[1].toFixed(2);
+    ta_nb.textContent  = tares[2].toFixed(2);
+
+    // Coğrafiya
+    let co = {
+        dq:+co_dq.value, yq:+co_yq.value,
+        dkod:+co_dkod.value, dy:+co_dyazili.value,
+        emsal:+co_emsal.value
+    };
+    checkLimits(co.dkod, 5, "Coğrafiya", "Dkod");
+    checkLimits(co.dy, 3, "Coğrafiya", "Dyazılı");
+    let cores = hesablaFen(co.dq, co.yq, co.dkod, co.dy);
+    co_nbq.textContent = cores[0].toFixed(2);
+    co_nba.textContent = cores[1].toFixed(2);
+    co_nb.textContent  = cores[2].toFixed(2);
+
+    // Xətaları göstər
+    errorBox.innerHTML = errorList.length ? errorList.join("<br>") : "";
+
+    // Yekun bal = NB * Əmsal
+    let umumiBal = errorList.length === 0 
+        ? (azres[2]*az.emsal + tares[2]*ta.emsal + cores[2]*co.emsal)
+        : 0;
+    umumi.textContent = umumiBal.toFixed(2);
+}
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+
+</body>
+</html>

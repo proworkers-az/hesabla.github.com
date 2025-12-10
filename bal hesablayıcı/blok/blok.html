@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Blok bal hesablayıcısı</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+  <style>
+  .container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+  body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+  .site-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #111;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+} 
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      color: #000;
+      padding: 20px;
+      transition: 0.3s;
+    }
+
+    .dark {
+      background: #111;
+      color: #fff;
+    }
+
+    /* Rejim düyməsi */
+    .mode-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      background: #000;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .dark .mode-btn {
+      background: #fff;
+      color: #000;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 120px auto;
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+
+    .dark .container {
+      background: #222;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+    }
+
+    .group-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #007bff;
+      color: #fff;
+      transition: 0.2s;
+    }
+
+    .group-btn:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+
+<!-- Rejim -->
+<button class="mode-btn" onclick="toggleMode()">🌙 / ☀️</button>
+
+<div class="container">
+  <h2>Qrupunuzu seçin</h2>
+
+  <button class="group-btn" onclick="goTo('1qrup.html')">1-ci qrup</button>
+  <button class="group-btn" onclick="goTo('2qrup.html')">2-ci qrup</button>
+  <button class="group-btn" onclick="goTo('3qrup.html')">3-cü qrup</button>
+  <button class="group-btn" onclick="goTo('4qrup.html')">4-cü qrup</button>
+</div>
+
+<script>
+  function toggleMode() {
+    document.body.classList.toggle("dark");
+  }
+
+  function goTo(page) {
+    window.location.href = page;
+  }
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+
+</body>
+</html>

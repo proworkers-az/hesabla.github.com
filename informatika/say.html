@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Say Sistemi Çevirici</title>
+
+  <style>
+  .container {
+  display: flex;
+  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav { 
+    flex-direction: column; /* menyu alt-üst olsun */
+  }
+  .container {
+    flex-direction: column;
+  }
+}
+  body {
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+  .site-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #111;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+    body{
+      font-family: Arial, sans-serif;
+      background:#f4f6f9;
+      color:#000;
+      padding:20px;
+      transition:0.3s;
+    }
+
+    .dark{
+      background:#111;
+      color:#fff;
+    }
+
+    /* Rejim düyməsi – yalnız sağ yuxarı künc */
+    .mode-btn{
+      position: fixed;
+      top:15px;
+      right:15px;
+      padding:10px 18px;
+      border-radius:10px;
+      border:none;
+      font-size:14px;
+      cursor:pointer;
+      background:#000;
+      color:#fff;
+    }
+
+    .dark .mode-btn{
+      background:#fff;
+      color:#000;
+    }
+
+    .box{
+      max-width:800px;
+      margin:100px auto;
+      background:#fff;
+      padding:50px;
+      border-radius:12px;
+      box-shadow:0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .dark .box{
+      background:#222;
+    }
+
+    input{
+      width:96.8%;
+      padding:12px;
+      font-size:16px;
+      margin:10px 0;
+      border-radius:8px;
+      border:1px solid #ccc;
+    }
+
+    .bases{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .arrow{
+      font-size:24px;
+      font-weight:bold;
+    }
+
+    button.convert-btn{
+      width:100%;
+      padding:12px;
+      font-size:16px;
+      background:#007bff;
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      margin-top:15px;
+      cursor:pointer;
+    }
+
+    .result{
+      margin-top:15px;
+      text-align:center;
+      font-size:18px;
+      font-weight:bold;
+    }
+
+    .error{
+      margin-top:10px;
+      text-align:center;
+      color:red;
+      font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Rejim düyməsi -->
+<button class="mode-btn" onclick="toggleMode()">🌙 / ☀️</button>
+
+<div class="box">
+  <h2 style="text-align:center">Say Sistemi Çevirici</h2>
+
+  <!-- Ədəd -->
+  <input type="text" id="number" placeholder="Ədədi daxil et" >
+
+  <!-- Hansından → Hansına -->
+  <div class="bases">
+    <input type="number" id="fromBase" placeholder="Ədədin olduğu say sistem" min="2" max="36">
+    <div class="arrow">→</div>
+    <input type="number" id="toBase" placeholder="Çevirmək istədiyiniz say sistem" min="2" max="36">
+  </div>
+
+  <!-- Convert -->
+  <button class="convert-btn" onclick="convert()">ÇEVİR</button>
+
+  <!-- Nəticə və xəta -->
+  <div class="result" id="result"></div>
+  <div class="error" id="error"></div>
+</div>
+
+<script>
+  function toggleMode(){
+    document.body.classList.toggle("dark");
+  }
+
+  // Daxil edilən ədəd seçilmiş say sisteminə uyğundurmu?
+  function isValidForBase(numStr, base){
+    numStr = numStr.trim().toUpperCase();
+    if(numStr === "") return false;
+
+    const allowed = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    for(let i = 0; i < numStr.length; i++){
+      const ch = numStr[i];
+
+      // mənfi işarə icazəli
+      if(ch === "-" && i === 0) continue;
+
+      const value = allowed.indexOf(ch);
+
+      if(value === -1 || value >= base){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function convert(){
+    const number = document.getElementById("number").value.trim();
+    const fromBase = parseInt(document.getElementById("fromBase").value);
+    const toBase = parseInt(document.getElementById("toBase").value);
+
+    const resultBox = document.getElementById("result");
+    const errorBox = document.getElementById("error");
+
+    resultBox.innerText = "";
+    errorBox.innerText = "";
+
+    if(!number || isNaN(fromBase) || isNaN(toBase)){
+      errorBox.innerText = "Bütün sahələri doldur.";
+      return;
+    }
+
+    if(fromBase < 2 || fromBase > 36 || toBase < 2 || toBase > 36){
+      errorBox.innerText = "Say sistemləri 2-36 arası olmalıdır.";
+      return;
+    }
+
+    // ƏSAS YOXLAMA – uyğun gəlmirsə xəta
+    if(!isValidForBase(number, fromBase)){
+      errorBox.innerText = "XƏTA: Bu ədəd seçilmiş say sistemində mövcud deyil!";
+      return;
+    }
+
+    // Çevirmə
+    const decimal = parseInt(number, fromBase);
+    const converted = decimal.toString(toBase).toUpperCase();
+
+    resultBox.innerText = "Nəticə: " + converted;
+  }
+</script>
+<footer class="site-footer">
+  © 2025 ProWorkers Corporation. All Rights Reserved.
+</footer>
+<script>
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false; // F12
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
+  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+};
+</script>
+
+</body>
+</html>
