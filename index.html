@@ -9,6 +9,15 @@
   <meta charset="UTF-8">
   <title>Müasir hesablayıcı</title>
   <style>
+.bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;         
+    }
   .container {
   display: flex;
   flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
@@ -48,7 +57,7 @@ img {
       padding: 40px 20px;
       text-align: center;
 
-      /* ✅ Yeni əlavə edilən hissə */
+     
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -56,7 +65,7 @@ img {
     }
 
     h1 {
-      width: 100%;     /* başlıq sətir boyu */
+      width: 100%;     
       margin-bottom: 30px;
       font-size: 28px;
     }
@@ -122,6 +131,7 @@ button {
   </style>
 </head>
 <body>
+<img src="4.avif" class="bg">
 
 
 <button class="toggle" onclick="toggleMode()">🌗 Ağ / Qara</button>
@@ -170,6 +180,7 @@ document.onkeydown = function(e) {
 
 </body>
 </html>
+
 
 
 
