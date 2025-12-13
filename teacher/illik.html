@@ -1,144 +1,168 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Yarımillik Bal Hesablayıcı</title>
-  <style>
-  .container {
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yarımillik Bal Hesablayıcı</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
   display: flex;
-  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(90,23,42,0.85), rgba(80,200,160,2));
+  transition: 0.3s;
+}
+
+body.dark {
+  background: linear-gradient(135deg, rgba(90,23,42,0.9), rgba(55,65,81,0.9));
+  color: #fff;
+}
+
+/* Top bar: sabit və sağ yuxarı */
+.top-bar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  position: fixed;
+  top: 0;
+  z-index: 100;
 }
 
 
-img {
-  max-width: 100%;
-  height: auto;
-}
 
 
-@media (max-width: 768px) {
-  .nav { 
-    flex-direction: column; /* menyu alt-üst olsun */
-  }
-  .container {
-    flex-direction: column;
-  }
-}
-  body {
-  font-size: 16px;
+
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 25px;
+  margin-top: 80px; /* top-bar üçün boşluq */
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 400px;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
+.container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+}
+
+h1 {
+  font-size: 26px;
+  text-align: center;
+  margin-bottom: 25px;
+  color: rgba(15,23,42,0.9);
+}
+
+body.dark h1 {
+  color: #fff;
+}
+
+/* Input */
+input {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.5);
+  text-align: center;
+  background: rgba(255,255,255,0.2);
+  color: #000;
+  outline: none;
+  transition: all 0.3s;
+}
+
+/* Placeholder rəngi */
+input::placeholder {
+  color: rgba(255,255,255,0.7); /* placeholder daha açıq */
+}
+
+body.dark input::placeholder {
+  color: rgba(200,200,200,0.7);
+}
+
+input:focus {
+  border-color: rgba(37,99,235,1);
+  box-shadow: 0 0 10px rgba(37,99,235,0.3);
+  background: rgba(255,255,255,0.4);
+}
+
+body.dark input {
+  color: #fff;
+  border-color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.1);
+}
+
+/* Button */
 button {
-  padding: 10px 20px;
-  font-size: 16px;
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: linear-gradient(90deg, rgba(37,99,235,1), rgba(96,165,250,1));
+  color: #fff;
+  transition: all 0.3s;
 }
 
-  .site-footer {
+button:hover {
+  background: linear-gradient(90deg, rgba(96,165,250,1), rgba(37,99,235,1));
+  transform: scale(1.03);
+}
+
+/* Result */
+.result {
+  margin-top: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  color: rgba(15,23,42,0.9);
+}
+
+body.dark .result {
+  color: #fff;
+}
+
+/* Footer */
+.site-footer {
   text-align: center;
   padding: 15px;
-  background-color: #111;
+  background-color: rgba(15,23,42,0.95);
   color: #fff;
   font-size: 14px;
+  width: 100%;
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 100%;
 }
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      color: #000;
-      margin: 0;
-      padding: 0;
-      transition: 0.3s;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
 
-    body.dark {
-      background: #111;
-      color: #fff;
-    }
-
-    .top-bar {
-      display: flex;
-      justify-content: flex-end;
-      padding: 15px 20px;
-    }
-
-    .toggle {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      background: black;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    body.dark .toggle {
-      background: white;
-      color: black;
-    }
-
-    .container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      padding: 20px;
-    }
-
-    input {
-      width: 250px;
-      padding: 15px;
-      font-size: 18px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
-
-    button {
-      width: 150px;
-      padding: 15px;
-      font-size: 18px;
-      border: none;
-      border-radius: 12px;
-      background: #007bff;
-      color: white;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      opacity: 0.9;
-      transform: scale(1.03);
-    }
-
-    .result {
-      margin-top: 20px;
-      font-size: 22px;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    h1 {
-      margin-bottom: 30px;
-      font-size: 26px;
-      text-align: center;
-    }
-  </style>
+/* Responsive */
+@media (max-width: 500px) {
+  input, button {
+    font-size: 16px;
+    padding: 12px;
+  }
+}
+</style>
 </head>
 <body>
 
-<div class="top-bar">
-  <button class="toggle" onclick="toggleMode()">🌗 Rejim</button>
-</div>
+
 
 <div class="container">
   <h1>📊 İllik Bal Hesablayıcı</h1>
@@ -151,41 +175,39 @@ button {
   <div id="result" class="result"></div>
 </div>
 
-<script>
-  function toggleMode() {
-    document.body.classList.toggle("dark");
-  }
-
-  function calculate() {
-    let first = Number(document.getElementById("first").value);
-    let second = Number(document.getElementById("second").value);
-
-    if (isNaN(first) || isNaN(second)) {
-      document.getElementById("result").innerText = "Zəhmət olmasa hər iki sahəni doldurun!";
-      return;
-    }
-
-    if (first < 0 || first > 100 || second < 0 || second > 100) {
-      document.getElementById("result").innerText = "Bal 0-dan 100-ə qədər olmalıdır!";
-      return;
-    }
-
-    let average = (first + second) / 2;
-    document.getElementById("result").innerText = "İllik bal: " + average.toFixed(2);
-  }
-</script>
 <footer class="site-footer">
   © 2025 ProWorkers Corporation. All Rights Reserved.
 </footer>
-<script>
-document.addEventListener("contextmenu", function(e) {
-  e.preventDefault();
-});
 
-document.onkeydown = function(e) {
-  if (e.keyCode === 123) return false; // F12
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
-  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+<script>
+function toggleMode() {
+  document.body.classList.toggle("dark");
+}
+
+function calculate() {
+  let first = Number(document.getElementById("first").value);
+  let second = Number(document.getElementById("second").value);
+
+  if (isNaN(first) || isNaN(second)) {
+    document.getElementById("result").innerText = "Zəhmət olmasa hər iki sahəni doldurun!";
+    return;
+  }
+
+  if (first < 0 || first > 100 || second < 0 || second > 100) {
+    document.getElementById("result").innerText = "Bal 0-dan 100-ə qədər olmalıdır!";
+    return;
+  }
+
+  let average = (first + second) / 2;
+  document.getElementById("result").innerText = "İllik bal: " + average.toFixed(2);
+}
+
+// Security scripts
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.onkeydown = e => {
+  if (e.keyCode === 123) return false;
+  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false;
+  if (e.ctrlKey && e.keyCode === 85) return false;
 };
 </script>
 
