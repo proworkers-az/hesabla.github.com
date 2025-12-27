@@ -6,64 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-  .container {
-  display: flex;
-  flex-wrap: wrap; /* kiçik ekranlarda alt-üst olsun */
-}
-
-  .toggle, .reset-btn {
- padding: 10px 15px;
- border: none;
- border-radius: 8px;
- cursor: pointer;
- color: white; } 
-    
- .toggle { background:black; } 
- body.dark .toggle { background:white; color:black; }
-.reset-btn { background:#dc3545; }
-
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-
-@media (max-width: 768px) {
-  .nav { 
-    flex-direction: column; /* menyu alt-üst olsun */
-  }
-  .container {
-    flex-direction: column;
-  }
-}
-  body {
-  font-size: 16px;
-}
-
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-}
-
-  .site-footer {
-  text-align: center;
-  padding: 15px;
-  background-color: #111;
-  color: #fff;
-  font-size: 14px;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-}
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       background: #f2f2f2;
       color: #000;
       transition: 0.3s;
+      font-size: 16px;
     }
+
     body.dark { background: #111; color: #fff; }
 
     .top-bar {
@@ -73,7 +24,17 @@ button {
       gap: 10px;
     }
 
-   
+    .toggle, .reset-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .toggle { background: black; }
+    body.dark .toggle { background: white; color: black; }
+    .reset-btn { background: #dc3545; }
 
     .container {
       max-width: 520px;
@@ -113,42 +74,94 @@ button {
       background: rgba(0,0,0,0.04);
       gap: 10px;
     }
-    body.dark .question { background: rgba(255,255,255,0.05); }
 
-    .result {
-      font-size: 20px;
+    body.dark .question {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .hidden { display: none; }
+
+    /* ===== MODAL ===== */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-box {
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      width: 85%;
+      max-width: 320px;
+      text-align: center;
+      position: relative;
+    }
+
+    body.dark .modal-box {
+      background: #222;
+      color: white;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .modal-score {
+      font-size: 26px;
       font-weight: bold;
       margin-top: 15px;
     }
 
-    .hidden { display: none; }
+    .site-footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #111;
+      color: #fff;
+      font-size: 14px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
 
 <div class="top-bar">
   <button class="toggle" onclick="toggleMode()">🌗 Rejim</button>
- 
   <button class="reset-btn" onclick="resetApp()">🔄 Yenidən başla</button>
 </div>
 
 <div class="container">
   <h2>KSQ Balının Hesablanması</h2>
 
-  <!-- STEP 1 -->
   <div id="step1">
     <input type="number" id="questionCount" placeholder="Sual sayı (məs: 10)" min="1">
     <br>
     <button onclick="generateInputs()">Başla</button>
   </div>
 
-  <!-- STEP 2 -->
   <div id="questionsArea"></div>
 
   <button onclick="startProcess()" id="startBtn" class="hidden">Yoxlamaya başla</button>
   <button onclick="calculate()" id="calcBtn" class="hidden">Hesabla</button>
+</div>
 
-  <div id="result" class="result"></div>
+<!-- MODAL -->
+<div class="modal" id="resultModal">
+  <div class="modal-box">
+    <div class="close-btn" onclick="closeModal()">❌</div>
+    <div class="modal-score" id="modalResult"></div>
+  </div>
 </div>
 
 <script>
@@ -156,8 +169,9 @@ button {
   const area = document.getElementById("questionsArea");
   const startBtn = document.getElementById("startBtn");
   const calcBtn = document.getElementById("calcBtn");
-  const resultBox = document.getElementById("result");
   const step1 = document.getElementById("step1");
+  const modal = document.getElementById("resultModal");
+  const modalResult = document.getElementById("modalResult");
 
   function toggleMode() {
     document.body.classList.toggle("dark");
@@ -165,9 +179,7 @@ button {
 
   function generateInputs() {
     const count = Number(questionInput.value);
-
     area.innerHTML = "";
-    resultBox.innerText = "";
     startBtn.classList.add("hidden");
     calcBtn.classList.add("hidden");
 
@@ -179,13 +191,11 @@ button {
     for (let i = 1; i <= count; i++) {
       const div = document.createElement("div");
       div.className = "question";
-
       div.innerHTML = `
         <label>Sual ${i}</label>
-        <input type="number" class="scoreInput" placeholder="Bal" min="0" max="100">
+        <input type="number" class="scoreInput" placeholder="Bal" min="0">
         <input type="checkbox" class="check" style="display:none;">
       `;
-
       area.appendChild(div);
     }
 
@@ -195,48 +205,42 @@ button {
   function startProcess() {
     const inputs = document.querySelectorAll(".scoreInput");
     let sum = 0;
-    let filled = true;
 
-    inputs.forEach(inp => {
-      const val = Number(inp.value);
-      if (inp.value === "") filled = false;
-      sum += val;
-    });
-
-    if (!filled) {
-      alert("Bütün balları doldur!");
-      return;
+    for (let inp of inputs) {
+      if (inp.value === "") {
+        alert("Bütün balları doldur!");
+        return;
+      }
+      sum += Number(inp.value);
     }
 
     if (sum !== 100) {
-      alert("Balların cəmi 100 olmalıdır!\nHazırki cəm: " + sum);
+      alert("Balların cəmi 100 olmalıdır! (Hazırki cəm: " + sum + ")");
       return;
     }
 
     document.querySelectorAll(".check").forEach(c => c.style.display = "inline-block");
-
-    // ✅ STEP1 gizlənir
     step1.classList.add("hidden");
-
     startBtn.classList.add("hidden");
     calcBtn.classList.remove("hidden");
   }
 
   function calculate() {
-    const questions = document.querySelectorAll(".question");
     let total = 0;
 
-    questions.forEach(q => {
+    document.querySelectorAll(".question").forEach(q => {
       const score = Number(q.querySelector(".scoreInput").value);
-      const checkbox = q.querySelector(".check");
-
-      if (checkbox.checked) {
-        total += score;
-        checkbox.checked = false;
-      }
+      const check = q.querySelector(".check");
+      if (check.checked) total += score;
     });
 
-    resultBox.innerText = "✅ Toplam bal: " + total;
+    modalResult.innerText = "✅ Toplam bal: " + total;
+    modal.style.display = "flex";
+  }
+
+  function closeModal() {
+    modal.style.display = "none";
+    document.querySelectorAll(".check").forEach(c => c.checked = false);
   }
 
   function resetApp() {
@@ -244,27 +248,23 @@ button {
     area.innerHTML = "";
     startBtn.classList.add("hidden");
     calcBtn.classList.add("hidden");
-    resultBox.innerText = "";
-    step1.classList.remove("hidden"); // geri qaytarılır
+    step1.classList.remove("hidden");
   }
 </script>
+
 <footer class="site-footer">
   © 2025 ProWorkers Corporation. All Rights Reserved.
 </footer>
+
 <script>
-document.addEventListener("contextmenu", function(e) {
-  e.preventDefault();
-});
-
-document.onkeydown = function(e) {
-  if (e.keyCode === 123) return false; // F12
-  if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false; // Ctrl+Shift+I
-  if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
-};
+  document.addEventListener("contextmenu", e => e.preventDefault());
+  document.onkeydown = e => {
+    if (e.keyCode === 123) return false;
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 73) return false;
+    if (e.ctrlKey && e.keyCode === 85) return false;
+  };
 </script>
-
 
 </body>
 </html>
-
 
